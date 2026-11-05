@@ -1,0 +1,24 @@
+services:
+  jenkins:
+    build:
+      context: .
+      args:
+        TERRAFORM_VERSION: "1.14"
+    image: jenkins-terraform:latest
+    container_name: jenkins
+    restart: unless-stopped
+    # Beri user jenkins akses ke docker.sock lewat GID grup docker di host
+    group_add:
+      - "${DOCKER_GID}"
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    environment:
+      - TZ=Asia/Jakarta
+      - JAVA_OPTS=-Duser.timezone=Asia/Jakarta -Xmx1g
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+
+volumes:
+  jenkins_home:
